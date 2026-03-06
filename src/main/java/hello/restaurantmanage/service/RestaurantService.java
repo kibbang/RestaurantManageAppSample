@@ -4,7 +4,6 @@ import hello.restaurantmanage.domain.Restaurant;
 import hello.restaurantmanage.dto.request.RestaurantCreateRequest;
 import hello.restaurantmanage.dto.request.RestaurantUpdateRequest;
 import hello.restaurantmanage.dto.response.RestaurantResponse;
-import hello.restaurantmanage.enums.FoodCategory;
 import hello.restaurantmanage.repository.RestaurantRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,11 +21,10 @@ public class RestaurantService {
 
     @Transactional
     public Long save(RestaurantCreateRequest request) {
-
         Restaurant restaurant = new Restaurant(
                 request.getName(),
                 request.getAddress(),
-                FoodCategory.valueOf(String.valueOf(request.getFoodCategory())),
+                request.getFoodCategory(),
                 request.getDescription()
         );
 
@@ -37,40 +35,23 @@ public class RestaurantService {
 
     public RestaurantResponse findById(Long id) {
         Restaurant restaurant = getRestaurant(id);
-
-        return new RestaurantResponse(
-                restaurant.getId(),
-                restaurant.getName(),
-                restaurant.getAddress(),
-                restaurant.getFoodCategory(),
-                restaurant.getDescription(),
-                restaurant.getCreatedAt(),
-                restaurant.getUpdatedAt()
-        );
+        return RestaurantResponse.from(restaurant);
     }
 
     public List<RestaurantResponse> findAll() {
-        List<Restaurant> restaurantList = restaurantRepository.findAll();
-
-        return restaurantList.stream().map(restaurant -> new RestaurantResponse(
-                restaurant.getId(),
-                restaurant.getName(),
-                restaurant.getAddress(),
-                restaurant.getFoodCategory(),
-                restaurant.getDescription(),
-                restaurant.getCreatedAt(),
-                restaurant.getUpdatedAt()
-        )).toList();
+        return restaurantRepository.findAll().stream()
+                .map(RestaurantResponse::from)
+                .toList();
     }
 
     @Transactional
-    public void modify(RestaurantUpdateRequest request) {
-        Restaurant restaurant = getRestaurant(request.getId());
+    public void modify(Long id, RestaurantUpdateRequest request) {
+        Restaurant restaurant = getRestaurant(id);
 
         restaurant.changeInfo(
                 request.getName(),
                 request.getAddress(),
-                request.getCategory(),
+                request.getFoodCategory(),
                 request.getDescription()
         );
     }
@@ -81,6 +62,7 @@ public class RestaurantService {
     }
 
     private Restaurant getRestaurant(Long id) {
-        return restaurantRepository.findById(id).orElseThrow();
+        return restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found: id=" + id));
     }
 }

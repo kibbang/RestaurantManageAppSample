@@ -7,10 +7,10 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 class RestaurantServiceTest {
 
     @Autowired
@@ -33,7 +33,6 @@ class RestaurantServiceTest {
         em.clear();
 
         // Then
-
         Assertions.assertThat(restaurantService.findAll()).hasSize(2);
     }
 }
