@@ -1,7 +1,6 @@
 package hello.restaurantmanage.domain;
 
 import hello.restaurantmanage.common.BaseTimeEntity;
-import hello.restaurantmanage.enums.Category;
 import hello.restaurantmanage.enums.FoodCategory;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,7 +19,7 @@ public class Restaurant extends BaseTimeEntity {
     private String name;
     private String address;
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private FoodCategory category;
 
     public Restaurant(String name, String address, FoodCategory category) {
         this.name = name;
