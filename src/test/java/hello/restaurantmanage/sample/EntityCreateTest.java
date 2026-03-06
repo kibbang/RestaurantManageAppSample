@@ -21,7 +21,7 @@ public class EntityCreateTest {
 
     @Test
     void createRestaurant() {
-        Restaurant restaurant = new Restaurant("test1", "test1", FoodCategory.KOREAN);
+        Restaurant restaurant = new Restaurant("test1", "test1", FoodCategory.KOREAN, "testDescription");
         em.persist(restaurant);
 
         em.flush();

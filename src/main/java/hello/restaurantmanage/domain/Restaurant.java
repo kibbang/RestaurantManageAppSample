@@ -24,11 +24,20 @@ public class Restaurant extends BaseTimeEntity {
     private String name;
     private String address;
     @Enumerated(EnumType.STRING)
-    private FoodCategory category;
+    private FoodCategory foodCategory;
+    private String description;
 
-    public Restaurant(String name, String address, FoodCategory category) {
+    public Restaurant(String name, String address, FoodCategory foodCategory, String description) {
         this.name = name;
         this.address = address;
-        this.category = category;
+        this.foodCategory = foodCategory;
+        this.description = description;
+    }
+
+    public void changeInfo(String name, String address, FoodCategory foodCategory, String description) {
+        this.name = name;
+        this.address = address;
+        this.foodCategory = foodCategory;
+        this.description = description;
     }
 }
