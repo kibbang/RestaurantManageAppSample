@@ -61,7 +61,7 @@ public class RestaurantService {
         restaurantRepository.deleteById(id);
     }
 
-    private Restaurant getRestaurant(Long id) {
+    public Restaurant getRestaurant(Long id) {
         return restaurantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found: id=" + id));
     }
