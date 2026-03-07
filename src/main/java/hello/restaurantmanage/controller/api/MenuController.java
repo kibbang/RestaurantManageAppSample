@@ -5,8 +5,9 @@ import hello.restaurantmanage.dto.request.MenuCreateRequest;
 import hello.restaurantmanage.dto.request.MenuUpdateRequest;
 import hello.restaurantmanage.dto.response.MenuResponse;
 import hello.restaurantmanage.service.MenuService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,10 +27,11 @@ public class MenuController {
     }
 
     @PostMapping("/restaurants/{restaurantId}/menus")
-    public ApiResponse<MenuResponse> createMenu(@PathVariable Long restaurantId, @Validated @RequestBody MenuCreateRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<MenuResponse> createMenu(@PathVariable Long restaurantId, @Valid @RequestBody MenuCreateRequest request) {
         menuService.registerMenu(restaurantId, request);
 
-        return new ApiResponse<>(200, "CREATE MENU SUCCESS", null);
+        return new ApiResponse<>(201, "CREATE MENU SUCCESS", null);
     }
 
     @GetMapping("/menus/{id}")
@@ -40,7 +42,7 @@ public class MenuController {
     }
 
     @PutMapping("/menus/{id}")
-    public ApiResponse<MenuResponse> modifyMenu(@PathVariable Long id, @RequestBody MenuUpdateRequest request) {
+    public ApiResponse<MenuResponse> modifyMenu(@PathVariable Long id, @Valid @RequestBody MenuUpdateRequest request) {
 
         menuService.modifyMenu(id, request);
 
@@ -50,6 +52,6 @@ public class MenuController {
     @DeleteMapping("/menus/{id}")
     public ApiResponse<MenuResponse> removeMenu(@PathVariable Long id) {
         menuService.removeMenu(id);
-        return new ApiResponse<>(200, "MODIFY MENU SUCCESS", null);
+        return new ApiResponse<>(200, "DELETE MENU SUCCESS", null);
     }
 }
