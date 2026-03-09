@@ -28,19 +28,8 @@ public class VisitService {
     public List<VisitResponse> getVisitList(Long restaurantId) {
         List<Visit> visitList = visitRepository.findByRestaurantId(restaurantId);
 
-        return  visitList.stream().map(visit -> {
-            Restaurant restaurant = visit.getRestaurant();
-
-            return new VisitResponse(
-                    visit.getId(),
-                    visit.getRating(),
-                    visit.getReview(),
-                    visit.getVisitDate(),
-                    restaurant.getId(),
-                    restaurant.getName(),
-                    visit.getCreatedAt()
-            );
-        })
+        return visitList.stream()
+                .map(VisitResponse::from)
                 .toList();
     }
 
@@ -72,17 +61,7 @@ public class VisitService {
     public VisitResponse showVisit(Long id) {
         Visit visit = getVisit(id);
 
-        Restaurant restaurant = visit.getRestaurant();
-
-        return new VisitResponse(
-                visit.getId(),
-                visit.getRating(),
-                visit.getReview(),
-                visit.getVisitDate(),
-                restaurant.getId(),
-                restaurant.getName(),
-                visit.getCreatedAt()
-        );
+        return VisitResponse.from(visit);
     }
 
     /**
@@ -106,7 +85,8 @@ public class VisitService {
      */
     @Transactional
     public void removeVisit(Long id) {
-        visitRepository.deleteById(id);
+        Visit visit = getVisit(id);
+        visitRepository.delete(visit);
     }
 
     private Visit getVisit(Long id) {

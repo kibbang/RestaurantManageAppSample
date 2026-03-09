@@ -5,13 +5,12 @@ import hello.restaurantmanage.dto.request.VisitCreateRequest;
 import hello.restaurantmanage.dto.request.VisitUpdateRequest;
 import hello.restaurantmanage.dto.response.VisitResponse;
 import hello.restaurantmanage.service.VisitService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -25,17 +24,18 @@ public class VisitController {
     public ApiResponse<List<VisitResponse>> getVisitList(@PathVariable Long restaurantId) {
         List<VisitResponse> visitList = visitService.getVisitList(restaurantId);
 
-        return new ApiResponse<>(OK.value(), "GET LIST SUCCESS", visitList);
+        return new ApiResponse<>(200, "GET LIST SUCCESS", visitList);
     }
 
     /**
      * 방문기록 등록
      */
     @PostMapping("/restaurants/{restaurantId}/visits")
-    public ApiResponse<VisitResponse> createVisit(@PathVariable Long restaurantId, @Validated @RequestBody VisitCreateRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<Void> createVisit(@PathVariable Long restaurantId, @Valid @RequestBody VisitCreateRequest request) {
         visitService.saveVisit(restaurantId, request);
 
-        return new ApiResponse<>(CREATED.value(), "CREATE SUCCESS", null);
+        return new ApiResponse<>(201, "CREATE SUCCESS", null);
     }
 
     /**
@@ -45,14 +45,14 @@ public class VisitController {
     public ApiResponse<VisitResponse> showVisit(@PathVariable Long id) {
         VisitResponse visitResponse = visitService.showVisit(id);
 
-        return new ApiResponse<>(OK.value(), "GET SUCCESS", visitResponse);
+        return new ApiResponse<>(200, "GET SUCCESS", visitResponse);
     }
 
     /**
      * 방문기록 수정
      */
     @PutMapping("/visits/{id}")
-    public ApiResponse<VisitResponse> updateVisit(@PathVariable Long id, @Validated @RequestBody VisitUpdateRequest request) {
+    public ApiResponse<Void> updateVisit(@PathVariable Long id, @Valid @RequestBody VisitUpdateRequest request) {
         visitService.modifyVisit(id, request);
 
         return new ApiResponse<>(200, "MODIFY VISIT SUCCESS", null);
@@ -62,7 +62,7 @@ public class VisitController {
      * 방문기록 삭제
      */
     @DeleteMapping("/visits/{id}")
-    public ApiResponse<VisitResponse> deleteVisit(@PathVariable Long id) {
+    public ApiResponse<Void> deleteVisit(@PathVariable Long id) {
         visitService.removeVisit(id);
 
         return new ApiResponse<>(200, "DELETE VISIT SUCCESS", null);
