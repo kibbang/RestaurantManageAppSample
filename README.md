@@ -69,7 +69,7 @@ Restaurant (맛집)
 - [x] 미션 1 : Restaurant 도메인 생성
 - [x] 미션 2 : Restaurant CRUD API
 - [x] 미션 3 : Menu 도메인 및 API
-- [ ] 미션 4 : Visit 도메인 및 API
+- [x] 미션 4 : Visit 도메인 및 API
 - [ ] 미션 5 : QueryDSL 동적 검색
 
 ## API 명세
@@ -93,6 +93,16 @@ Restaurant (맛집)
 | POST | `/api/v1/restaurants/{restaurantId}/menus` | 메뉴 등록 |
 | PUT | `/api/v1/menus/{id}` | 메뉴 수정 |
 | DELETE | `/api/v1/menus/{id}` | 메뉴 삭제 |
+
+### Visit API
+
+| Method | URL | 설명 |
+|--------|-----|------|
+| GET | `/api/v1/restaurants/{restaurantId}/visits` | 맛집 방문기록 목록 조회 |
+| GET | `/api/v1/visits/{id}` | 방문기록 단건 조회 |
+| POST | `/api/v1/restaurants/{restaurantId}/visits` | 방문기록 등록 |
+| PUT | `/api/v1/visits/{id}` | 방문기록 수정 |
+| DELETE | `/api/v1/visits/{id}` | 방문기록 삭제 |
 
 ## 실행 방법
 
