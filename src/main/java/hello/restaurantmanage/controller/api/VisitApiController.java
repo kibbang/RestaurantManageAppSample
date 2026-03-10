@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-public class VisitController {
+public class VisitApiController {
     private final VisitService visitService;
     /**
      * 해당 맛집의 방문기록 목록 조회

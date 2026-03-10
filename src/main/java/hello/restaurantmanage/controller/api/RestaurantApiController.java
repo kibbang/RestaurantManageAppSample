@@ -3,10 +3,16 @@ package hello.restaurantmanage.controller.api;
 import hello.restaurantmanage.common.ApiResponse;
 import hello.restaurantmanage.dto.request.RestaurantCreateRequest;
 import hello.restaurantmanage.dto.request.RestaurantUpdateRequest;
+import hello.restaurantmanage.dto.response.RestaurantDetailResponse;
 import hello.restaurantmanage.dto.response.RestaurantResponse;
+import hello.restaurantmanage.dto.response.RestaurantSearchResponse;
+import hello.restaurantmanage.dto.search.RestaurantSearchCondition;
+import hello.restaurantmanage.service.RestaurantDetailService;
 import hello.restaurantmanage.service.RestaurantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +32,7 @@ import java.util.List;
 public class RestaurantApiController {
 
     private final RestaurantService restaurantService;
+    private final RestaurantDetailService restaurantDetailService;
 
     @GetMapping
     public ApiResponse<List<RestaurantResponse>> getRestaurants() {
@@ -58,5 +65,20 @@ public class RestaurantApiController {
     public ApiResponse<Void> deleteRestaurant(@PathVariable Long id) {
         restaurantService.deleteById(id);
         return new ApiResponse<>(200, "DELETE SUCCESS", null);
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<Page<RestaurantSearchResponse>> searchRestaurant(@RequestBody RestaurantSearchCondition condition, Pageable pageable) {
+        Page<RestaurantSearchResponse> search = restaurantDetailService.search(condition, pageable);
+
+        return new ApiResponse<>(200, "SEARCH SUCCESS", search);
+    }
+
+    @GetMapping("/{id}/detail")
+    public ApiResponse<RestaurantDetailResponse> showDetail(@PathVariable Long id) {
+
+        RestaurantDetailResponse restaurantDetailResponse = restaurantDetailService.showDetails(id);
+
+        return new ApiResponse<>(200, "RESTAURANT DETAIL LOAD SUCCESS", restaurantDetailResponse);
     }
 }
