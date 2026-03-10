@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -68,9 +69,10 @@ public class RestaurantApiController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<Page<RestaurantSearchResponse>> searchRestaurant(@RequestBody RestaurantSearchCondition condition, Pageable pageable) {
+    public ApiResponse<Page<RestaurantSearchResponse>> searchRestaurant(
+            @ModelAttribute RestaurantSearchCondition condition,
+            Pageable pageable) {
         Page<RestaurantSearchResponse> search = restaurantDetailService.search(condition, pageable);
-
         return new ApiResponse<>(200, "SEARCH SUCCESS", search);
     }
 

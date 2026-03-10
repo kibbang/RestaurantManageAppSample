@@ -70,7 +70,7 @@ Restaurant (맛집)
 - [x] 미션 2 : Restaurant CRUD API
 - [x] 미션 3 : Menu 도메인 및 API
 - [x] 미션 4 : Visit 도메인 및 API
-- [ ] 미션 5 : QueryDSL 동적 검색
+- [x] 미션 5 : QueryDSL 동적 검색 및 상세 조회
 
 ## API 명세
 
@@ -83,6 +83,8 @@ Restaurant (맛집)
 | POST | `/api/v1/restaurants` | 맛집 등록 |
 | PUT | `/api/v1/restaurants/{id}` | 맛집 수정 |
 | DELETE | `/api/v1/restaurants/{id}` | 맛집 삭제 |
+| GET | `/api/v1/restaurants/search` | 맛집 동적 검색 (이름, 카테고리, 주소, 최소평점) |
+| GET | `/api/v1/restaurants/{id}/detail` | 맛집 상세 조회 (메뉴, 방문기록 포함) |
 
 ### Menu API
 
@@ -103,6 +105,51 @@ Restaurant (맛집)
 | POST | `/api/v1/restaurants/{restaurantId}/visits` | 방문기록 등록 |
 | PUT | `/api/v1/visits/{id}` | 방문기록 수정 |
 | DELETE | `/api/v1/visits/{id}` | 방문기록 삭제 |
+
+### 검색 파라미터
+
+| 파라미터 | 타입 | 설명 |
+|----------|------|------|
+| name | String | 맛집 이름 (부분 일치) |
+| foodCategory | Enum | 음식 카테고리 (KOREAN, CHINESE, JAPANESE, WESTERN, ETC) |
+| address | String | 주소 (부분 일치) |
+| minRate | Double | 최소 평균 평점 |
+| page | int | 페이지 번호 (0부터) |
+| size | int | 페이지 크기 |
+
+## 프로젝트 구조
+
+```
+src/main/java/hello/restaurantmanage/
+├── common/                    # 공통 클래스
+│   ├── ApiResponse.java       # API 응답 래퍼
+│   └── BaseTimeEntity.java    # 생성/수정일 자동 관리
+├── controller/api/            # REST 컨트롤러
+│   ├── RestaurantApiController.java
+│   ├── MenuApiController.java
+│   └── VisitApiController.java
+├── domain/                    # JPA 엔티티
+│   ├── Restaurant.java
+│   ├── Menu.java
+│   └── Visit.java
+├── dto/
+│   ├── request/               # 요청 DTO
+│   ├── response/              # 응답 DTO
+│   └── search/                # 검색 조건 DTO
+├── enums/
+│   └── FoodCategory.java
+├── repository/                # Spring Data JPA + QueryDSL
+│   ├── RestaurantRepository.java
+│   ├── RestaurantCustomRepository.java
+│   ├── RestaurantCustomRepositoryImpl.java
+│   ├── MenuRepository.java
+│   └── VisitRepository.java
+└── service/                   # 비즈니스 로직
+    ├── RestaurantService.java
+    ├── RestaurantDetailService.java
+    ├── MenuService.java
+    └── VisitService.java
+```
 
 ## 실행 방법
 

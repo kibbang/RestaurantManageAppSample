@@ -12,26 +12,26 @@ import hello.restaurantmanage.repository.VisitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RestaurantDetailService {
     private final RestaurantRepository restaurantRepository;
     private final MenuRepository menuRepository;
     private final VisitRepository visitRepository;
 
-
     public Page<RestaurantSearchResponse> search(RestaurantSearchCondition condition, Pageable pageable) {
-
         return restaurantRepository.search(condition, pageable);
     }
 
     public RestaurantDetailResponse showDetails(Long id) {
-        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow();
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 맛집입니다: id=" + id));
 
         List<MenuResponse> menuList = menuRepository.findByRestaurantId(id)
                 .stream()
@@ -44,20 +44,11 @@ public class RestaurantDetailService {
                 .toList();
 
         int visitCount = visitList.size();
-        double averageRating = visitList.stream().mapToInt(VisitResponse::getRating).average().orElse(0.0);
+        double averageRating = visitList.stream()
+                .mapToInt(VisitResponse::getRating)
+                .average()
+                .orElse(0.0);
 
-        return RestaurantDetailResponse.from(
-                restaurant.getId(),
-                restaurant.getName(),
-                restaurant.getAddress(),
-                restaurant.getFoodCategory(),
-                restaurant.getDescription(),
-                averageRating,
-                visitCount,
-                menuList,
-                visitList,
-                restaurant.getCreatedAt(),
-                restaurant.getUpdatedAt()
-        );
+        return RestaurantDetailResponse.from(restaurant, menuList, visitList, averageRating, visitCount);
     }
 }
