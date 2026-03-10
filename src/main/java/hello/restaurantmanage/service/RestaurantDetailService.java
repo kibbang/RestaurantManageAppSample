@@ -33,12 +33,12 @@ public class RestaurantDetailService {
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 맛집입니다: id=" + id));
 
-        List<MenuResponse> menuList = menuRepository.findByRestaurantId(id)
+        List<MenuResponse> menuList = menuRepository.findByRestaurantIdIn(List.of(id))
                 .stream()
                 .map(MenuResponse::from)
                 .toList();
 
-        List<VisitResponse> visitList = visitRepository.findByRestaurantId(id)
+        List<VisitResponse> visitList = visitRepository.findByRestaurantIdIn(List.of(id))
                 .stream()
                 .map(VisitResponse::from)
                 .toList();
