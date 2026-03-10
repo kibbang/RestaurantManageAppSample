@@ -26,14 +26,14 @@ public class RestaurantCustomRepositoryImpl implements RestaurantCustomRepositor
 
     @Override
     public Page<RestaurantSearchResponse> search(RestaurantSearchCondition condition, Pageable pageable) {
-        List<RestaurantSearchResponse> fetch = query
+        List<RestaurantSearchResponse> content = query
                 .select(
                         Projections.constructor(RestaurantSearchResponse.class,
                                 restaurant.id,
                                 restaurant.name,
                                 restaurant.address,
                                 restaurant.foodCategory,
-                                visit.rating.avg().as("averageRating"),
+                                visit.rating.avg().coalesce(0.0).as("averageRating"),
                                 visit.count().as("visitCount")
                         )
                 )
@@ -49,17 +49,19 @@ public class RestaurantCustomRepositoryImpl implements RestaurantCustomRepositor
                         minRatingGoe(condition.getMinRate())
                 )
                 .orderBy(visit.rating.avg().desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         long count = query
-                .select(restaurant.countDistinct())
+                .select(restaurant.id)
                 .from(restaurant)
                 .leftJoin(visit).on(visit.restaurant.eq(restaurant))
                 .where(
                         nameLike(condition.getName()),
                         foodCategoryEq(condition.getFoodCategory()),
                         addressLike(condition.getAddress())
-                        )
+                )
                 .groupBy(restaurant.id)
                 .having(
                         minRatingGoe(condition.getMinRate())
@@ -67,7 +69,7 @@ public class RestaurantCustomRepositoryImpl implements RestaurantCustomRepositor
                 .fetch()
                 .size();
 
-        return new PageImpl<>(fetch, pageable, count);
+        return new PageImpl<>(content, pageable, count);
     }
 
     private BooleanExpression nameLike(String name) {
